@@ -1,0 +1,15 @@
+Algorithm for detecting walkable path:-
+
+step 1:- Read each frame from the live stream.
+step 2:- Create an HSV image of the frame.
+step 3:- Apply image mask filtering to detect the purple color depecting the foot path.
+step 4:- Divide the frame into equal segments.
+step 5:- Detect countours of each segment and calculate its area.
+step 6:- Find the centeroid of each segment if it's area is greater than the pre-fixed threshold.
+
+
+Algorithm for guiding the blind:-
+
+step 1:- Find the angle between all consecutive points found using algorithm 1 for each frame.
+step 2:- Map the angle with the real-world human perception.
+step 3:- Guide the person using speech recognition and also with an helptic belt.
