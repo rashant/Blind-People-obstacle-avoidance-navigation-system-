@@ -4,23 +4,23 @@ import cv2
 import numpy as np
 from keras import backend as K
 from keras.callbacks import TensorBoard
+from keras.applications.vgg16 import VGG16
 from UNETMODEL import UNET
 from keras.optimizers import Adam
-from keras.utils import image_dataset_from_directory
 
 x,y=[],[]
 
-# for i in os.listdir("Dataset_shortened"):
-#     print(i)
-#     path=os.path.join("Dataset_shortened",i)
-#     img=cv2.imread(path)
-#     img=img/255
-#     x.append(img)
+for i in os.listdir("D:\Projects\Trinetra Datasets\Dataset_shortened_2"):
+    print(i)
+    path=os.path.join("D:\Projects\Trinetra Datasets\Dataset_shortened_2",i)
+    img=cv2.imread(path)
+    img=img/255
+    x.append(img)
 
-#     path=os.path.join("Dataset/Masks",i)
-#     img=cv2.imread(path)
-#     img=img/255
-#     y.append(y)
+    path=os.path.join("D:\Projects\Trinetra Datasets\Dataset\Masks",i)
+    img=cv2.imread(path)
+    img=img/255
+    y.append(y)
 
 # i,j=0,0
 # while(i!=300):
@@ -36,24 +36,27 @@ x,y=[],[]
 #         y.append(img)
 #         i+=1
 
-# with open("images_shortened.pkl","wb") as file:
-#     pickle.dump(x,file)
-# print("images dumped")
-# with open("masks_shortened.pkl","wb") as file:
-#     pickle.dump(y,file)
-# print("masks dumped")
+with open("images_shortened2.pkl","wb") as file:
+    pickle.dump(x,file)
+print("images dumped")
+with open("masks_shortened2.pkl","wb") as file:
+    pickle.dump(y,file)
+print("masks dumped")
 
-with open("images_shortened.pkl","rb") as file:
-    x=pickle.load(file)
-print("images loaded")
+# with open("images_shortened2.pkl","rb") as file:
+#     x=pickle.load(file)
+# print("images loaded")
 
-with open("masks_shortened.pkl","rb") as file:
-    y=pickle.load(file)
-print("masks loaded")
+# with open("masks_shortened2.pkl","rb") as file:
+#     y=pickle.load(file)
+# print("masks loaded")
 
 
-print("Loading model\n\n")
-model=UNET()
+# print("Loading model\n\n")
+# model=UNET()
+print("Loading pre-model\n\n")
+model = VGG16(weights='imagenet', include_top=False,input_shape=(256,256,3))
+print(model.summary())
 
 def jaccard_distance(y_true, y_pred, smooth=100):
     intersection = K.sum(K.abs(y_true * y_pred), axis=-1)
@@ -110,7 +113,7 @@ tensorboard_callback=TensorBoard(log_dir=logs)
 x=np.array(x)
 y=np.array(y)
 print("Starting Training\n\n")
-hist=model.fit(x,y,epochs=100,batch_size=16,callbacks=[tensorboard_callback])
+hist=model.fit(x,y,epochs=100)
 print("Saving history\n\n")
 with open("history.pkl","wb") as file:
     pickle.dump(hist,file)
