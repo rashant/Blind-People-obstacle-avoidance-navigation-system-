@@ -1,120 +1,171 @@
+# Common
 import os
-import pickle
-import cv2
+import keras
 import numpy as np
-from keras import backend as K
-from keras.callbacks import TensorBoard
-from keras.applications.vgg16 import VGG16
-from UNETMODEL import UNET
+import cv2
+from UNETMODEL import *
+
+# Data Viz
+import matplotlib.pyplot as plt
+
+# Model 
+from keras import Sequential
+from keras.layers import Conv2D, Conv2DTranspose, InputLayer, Layer, Input, Dropout, MaxPool2D, concatenate
 from keras.optimizers import Adam
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 x,y=[],[]
 
-for i in os.listdir("D:\Projects\Trinetra Datasets\Dataset_shortened_2"):
-    print(i)
-    path=os.path.join("D:\Projects\Trinetra Datasets\Dataset_shortened_2",i)
-    img=cv2.imread(path)
+for i in range(300):
+    image_path=os.path.join('D:\Projects\Trinetra Datasets\Dataset\Images',os.listdir('D:\Projects\Trinetra Datasets\Dataset\Images')[i])
+    masks_path=os.path.join('D:\Projects\Trinetra Datasets\Dataset\Masks',os.listdir('D:\Projects\Trinetra Datasets\Dataset\Masks')[i])
+    
+    img=cv2.imread(image_path)
+    mask=cv2.imread(masks_path)
+
     img=img/255
+    mask=mask/255
+
+    img = cv2.GaussianBlur(img, (1, 1), 0)
+    mask = cv2.GaussianBlur(mask, (1, 1), 0)
+
     x.append(img)
+    y.append(mask)
 
-    path=os.path.join("D:\Projects\Trinetra Datasets\Dataset\Masks",i)
-    img=cv2.imread(path)
-    img=img/255
-    y.append(y)
-
-# i,j=0,0
-# while(i!=300):
-#         print(i)
-#         path=os.path.join("Dataset/Images",os.listdir("Dataset/Images")[i])
-#         img=cv2.imread(path)
-#         img=img/255
-#         x.append(img)
-
-#         path=os.path.join("Dataset/Masks",os.listdir("Dataset/Masks")[i])
-#         img=cv2.imread(path)
-#         img=img/255
-#         y.append(img)
-#         i+=1
-
-with open("images_shortened2.pkl","wb") as file:
-    pickle.dump(x,file)
-print("images dumped")
-with open("masks_shortened2.pkl","wb") as file:
-    pickle.dump(y,file)
-print("masks dumped")
-
-# with open("images_shortened2.pkl","rb") as file:
-#     x=pickle.load(file)
-# print("images loaded")
-
-# with open("masks_shortened2.pkl","rb") as file:
-#     y=pickle.load(file)
-# print("masks loaded")
-
-
-# print("Loading model\n\n")
-# model=UNET()
-print("Loading pre-model\n\n")
-model = VGG16(weights='imagenet', include_top=False,input_shape=(256,256,3))
-print(model.summary())
-
-def jaccard_distance(y_true, y_pred, smooth=100):
-    intersection = K.sum(K.abs(y_true * y_pred), axis=-1)
-    sum_ = K.sum(K.abs(y_true) + K.abs(y_pred), axis=-1)
-    jac = (intersection + smooth) / (sum_ - intersection + smooth)
-    return (1 - jac) * smooth
-
-optimizer=Adam(learning_rate=0.001)
-model.compile(optimizer=optimizer,loss='categorical_crossentropy', metrics=[jaccard_distance])
-
-colors = [ [128, 64, 128],
-        [244, 35, 232],
-        [70, 70, 70],
-        [102, 102, 156],
-        [190, 153, 153],
-        [153, 153, 153],
-        [250, 170, 30],
-        [220, 220, 0],
-        [107, 142, 35],
-        [152, 251, 152],
-        [0, 130, 180],
-        [220, 20, 60],
-        [255, 0, 0],
-        [0, 0, 142],
-        [0, 0, 70],
-        [0, 60, 100],
-        [0, 80, 100],
-        [0, 0, 230],
-        [119, 11, 32],
-    ]
-class_names = ["road",
-            "sidewalk",
-            "building",
-            "wall",
-            "fence",
-            "pole",
-            "traffic_light",
-            "traffic_sign",
-            "vegetation",
-            "terrain",
-            "sky",
-            "person",
-            "rider",
-            "car",
-            "truck",
-            "bus",
-            "train",
-            "motorcycle",
-            "bicycle",
-        ]
-
-logs="Logs"
-tensorboard_callback=TensorBoard(log_dir=logs)
 x=np.array(x)
 y=np.array(y)
-print("Starting Training\n\n")
-hist=model.fit(x,y,epochs=100)
-print("Saving history\n\n")
-with open("history.pkl","wb") as file:
-    pickle.dump(hist,file)
-model.save("dummy.h5")
+
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2)
+
+class EncoderLayerBlock(Layer):
+    def __init__(self, filters, rate, pooling=True):
+        super(EncoderLayerBlock, self).__init__()
+        self.filters = filters
+        self.rate = rate
+        self.pooling = pooling
+
+        self.c1 = Conv2D(self.filters, kernel_size=3, padding='same', activation='relu', kernel_initializer='he_normal')
+        self.drop = Dropout(self.rate)
+        self.c2 = Conv2D(self.filters, kernel_size=3, padding='same', activation='relu', kernel_initializer='he_normal')
+        self.pool = MaxPool2D(pool_size=(2,2))
+
+    def call(self, X):
+        x = self.c1(X)
+        x = self.drop(x)
+        x = self.c2(x)
+        if self.pooling:
+            y = self.pool(x)
+            return y, x
+        else: 
+            return x
+
+    def get_config(self):
+        base_estimator = super().get_config()
+        return {
+            **base_estimator,
+            "filters":self.filters,
+            "rate":self.rate,
+            "pooling":self.pooling
+        }
+
+#  Decoder Layer
+class DecoderLayerBlock(Layer):
+    def __init__(self, filters, rate, padding='same'):
+            super(DecoderLayerBlock, self).__init__()
+            self.filters = filters
+            self.rate = rate
+            self.cT = Conv2DTranspose(self.filters, kernel_size=3, strides=2, padding=padding)
+            self.next = EncoderLayerBlock(self.filters, self.rate, pooling=False)
+
+    def call(self, X):
+        X, skip_X = X
+        x = self.cT(X)
+        c1 = concatenate([x, skip_X])
+        y = self.next(c1)
+        return y 
+
+    def get_config(self):
+        base_estimator = super().get_config()
+        return {
+            **base_estimator,
+            "filters":self.filters,
+            "rate":self.rate,
+        }
+
+#  Callback 
+class ShowProgress(keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs=None):
+        id = np.random.randint(len(x_test))
+        rand_img = x_test[id][np.newaxis,...]
+        pred_mask = self.model.predict(rand_img)[0]
+        true_mask = y_test[id]
+
+
+        plt.subplot(1,3,1)
+        plt.imshow(rand_img[0])
+        plt.title("Original Image")
+        plt.axis('off')
+
+
+        plt.subplot(1,3,2)
+        plt.imshow(pred_mask)
+        plt.title("Predicted Mask")
+        plt.axis('off')
+
+        plt.subplot(1,3,3)
+        plt.imshow(true_mask)
+        plt.title("True Mask")
+        plt.axis('off')
+
+        plt.tight_layout()
+        plt.show()
+
+    # Input Layer 
+input_layer = Input(shape=x_train.shape[-3:])
+
+    # Encoder
+p1, c1 = EncoderLayerBlock(16,0.1)(input_layer)
+p2, c2 = EncoderLayerBlock(32,0.1)(p1)
+p3, c3 = EncoderLayerBlock(64,0.2)(p2)
+p4, c4 = EncoderLayerBlock(128,0.2)(p3)
+
+    # Encoding Layer
+c5 = EncoderLayerBlock(256,0.3,pooling=False)(p4)
+
+    # Decoder
+d1 = DecoderLayerBlock(128,0.2)([c5, c4])
+d2 = DecoderLayerBlock(64,0.2)([d1, c3])
+d3 = DecoderLayerBlock(32,0.2)([d2, c2])
+d4 = DecoderLayerBlock(16,0.2)([d3, c1])
+
+    # Output layer
+output = Conv2D(3,kernel_size=1,strides=1,padding='same',activation='sigmoid')(d4)
+
+    # U-Net Model
+model = build_vgg16_unet((256,256,3))
+
+    # Compiling
+model.compile(
+    loss='categorical_crossentropy',
+    optimizer=Adam(learning_rate=0.01),
+    metrics=['accuracy', keras.metrics.MeanIoU(num_classes=3)]
+)
+
+    # Callbacks 
+callbacks =[
+    EarlyStopping(patience=5, restore_best_weights=True),
+    ModelCheckpoint("UNet-segmentizer.h5", save_best_only=True),
+    ShowProgress()
+]
+
+
+    # Train The Model
+model.fit(
+    x_train, y_train,
+    validation_data=(x_test, y_test),
+    epochs=500,
+    callbacks=callbacks,
+    steps_per_epoch=32
+)

@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import imutils
 import pandas as pd
+from SpeechCommand import *
 
 '''Angle finding function'''
 def findAngle(x1,y1,x2,y2,x3,y3):
@@ -82,7 +83,8 @@ def path_find(img):
 
                 if abs(angle)>80:
                     cv2.putText(img,"Stop",(90,50), cv2.FONT_HERSHEY_COMPLEX_SMALL,2,(0,255,0),1,cv2.LINE_AA)
-                
+                    command_play()
+
                 cv2.line(img, (prevx,prevy), (prevx,cy+i), (0, 255, 0), 1)
                 cv2.line(img, (prevx,prevy), (cx,cy+i), (0, 255, 0), 1)
                 cv2.line(line_frame, (prevx,prevy), (cx,cy+i), (0, 255, 0), 1)
