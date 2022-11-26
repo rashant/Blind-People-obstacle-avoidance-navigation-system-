@@ -8,7 +8,7 @@ while cap.isOpened():
     frame=cv2.resize(frame,(720,360))
     df=path_find(frame)
     print(df)
-    #sleep(0.1)
+    sleep(1)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

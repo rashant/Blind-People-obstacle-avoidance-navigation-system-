@@ -83,7 +83,8 @@ def path_find(img):
 
                 if abs(angle)>80:
                     cv2.putText(img,"Stop",(90,50), cv2.FONT_HERSHEY_COMPLEX_SMALL,2,(0,255,0),1,cv2.LINE_AA)
-                    command_play()
+                    #cv2.putText(img,"Played",(90,100), cv2.FONT_HERSHEY_COMPLEX_SMALL,2,(0,255,0),1,cv2.LINE_AA)
+                    #command_play()
 
                 cv2.line(img, (prevx,prevy), (prevx,cy+i), (0, 255, 0), 1)
                 cv2.line(img, (prevx,prevy), (cx,cy+i), (0, 255, 0), 1)
@@ -111,7 +112,7 @@ def path_find(img):
                 cv2.imshow("Path",final)
                 prevx,prevy=cx,cy+i
                 counter+=1
-        if counter==7:
+        if counter==3:
             break
         
     dic={"Segment":segment_list,"X1":x1_list,"X2":x2_list,"X3":x3_list,"Y1":y1_list,"Y2":y2_list,"Y3":y3_list,"Area":area_list,"Angle":angle_list}
