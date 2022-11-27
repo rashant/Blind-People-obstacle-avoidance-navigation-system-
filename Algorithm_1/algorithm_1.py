@@ -24,9 +24,6 @@ def path_find(img):
     segment=1
     rows,cols,_=img.shape
 
-    print("Rows:- ",rows)
-    print("Columns:- ",cols)
-
     prevx,prevy=int(cols/2),cols
 
     lower=np.array([146,  37,  93])
@@ -83,6 +80,7 @@ def path_find(img):
 
                 if abs(angle)>80:
                     cv2.putText(img,"Stop",(90,50), cv2.FONT_HERSHEY_COMPLEX_SMALL,2,(0,255,0),1,cv2.LINE_AA)
+                    
                     #cv2.putText(img,"Played",(90,100), cv2.FONT_HERSHEY_COMPLEX_SMALL,2,(0,255,0),1,cv2.LINE_AA)
                     #command_play()
 
