@@ -1,8 +1,36 @@
-from pygame import mixer
-import time
-mixer.init()
+# Import the required module for text
+# to speech conversion
+# from gtts import gTTS
 
-def command_play(command='D:\Projects\Trinetra\WhatsApp Ptt 2022-11-21 at 10.49.24 AM-[AudioTrimmer.com].mp3'):
-    mixer.music.load(command)
-    mixer.music.play()
-    time.sleep(1)
+# # This module is imported so that we can
+# # play the converted audio
+# import os
+
+# # The text that you want to convert to audio
+# mytext = 'stop'
+
+# # Language in which you want to convert
+# language = 'en'
+
+# # Passing the text and language to the engine,
+# # here we have marked slow=False. Which tells
+# # the module that the converted audio should
+# # have a high speed
+# myobj = gTTS(text=mytext, lang=language, slow=False)
+
+# # Saving the converted audio in a mp3 file named
+# # welcome
+# myobj.save("commands/stop.mp3")
+
+lis=[]
+print(lis)
+
+lis.append(1)
+print(lis)
+
+lis.append(2)
+print(lis)
+
+lis.append(3)
+print(lis)
+

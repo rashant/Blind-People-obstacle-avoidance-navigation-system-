@@ -2,10 +2,17 @@ from time import sleep
 import cv2
 from algorithm_1 import *
 from pygame import mixer
-status=0
-mixer.music.load("D:\Projects\Trinetra\WhatsApp Ptt 2022-11-21 at 10.49.24 AM-[AudioTrimmer.com].mp3")
+import pandas as pd
 
+com_list=[]
+
+mixer.init()
 cap=cv2.VideoCapture("y2mate.com - Feature Space Optimization for Semantic Video Segmentation  CityScapes Demo 02_1080p.mp4")
+
+command_list=['No']
+
+#RIGHT---> -VE 
+#LEFT----> +VE
 
 while cap.isOpened():
     command=None
@@ -16,28 +23,75 @@ while cap.isOpened():
     angle=list(df['Angle'])
     if any(abs(ang)>=85 for ang in angle):
         command='stop'
-        if status==0:
-            print("Playing Music")
+        if command not in command_list:
+            command_list.pop()
+            command_list.append(command)
+            mixer.music.load("commands/stop.mp3")
             mixer.music.play()
+            print('command played')
 
         if mixer.music.get_busy():
-            status=1
-            print('busy')
+            pass
         else:
-            status=0
+            
             mixer.stop()
-            print("Command Completed")
+
 
     elif abs(angle[0])>=0 and abs(angle[0])<=8:
         command='straight'
+        if command not in command_list:
+            command_list.pop()
+            command_list.append(command)
+            mixer.music.load("commands/straight.mp3")
+            mixer.music.play()
+            print('command played')
+
+        if mixer.music.get_busy():
+            pass
+        else:
+            mixer.stop()
+
     
-    elif abs(angle[0])>8 and abs(angle[0])<85:
-        command='turning'
+    elif abs(angle[-1])>8 and abs(angle[-1])<85:
+
+        if angle[-1]<0:
+            command='right'
+            if command not in command_list:
+                command_list.pop()
+                command_list.append(command)
+                mixer.music.load("commands/right.mp3")
+                mixer.music.play()
+                print('command played')
+
+            if mixer.music.get_busy():
+                pass
+            else:
+                mixer.stop()
     
-    print(command)
+        else:
+            command='left'
+            if command not in command_list:
+                command_list.pop()
+                command_list.append(command)
+                mixer.music.load("commands/left.mp3")
+                mixer.music.play()
+                print('command played')
+
+            if mixer.music.get_busy():
+               pass
+    
+            else:
+                mixer.stop()
+    
+    
+    print(command_list,command)
+    com_list.append(command)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
 cv2.destroyAllWindows()
+
+df=pd.DataFrame({'Commands':com_list})
+df.to_csv('commands.csv')

@@ -11,5 +11,6 @@ step 6:- Find the centeroid of each segment if it's area is greater than the pre
 Algorithm for guiding the blind:-
 
 step 1:- Find the angle between all consecutive points found using algorithm 1 for each frame.
-step 2:- Map the angle with the real-world human perception.
-step 3:- Guide the person using speech recognition and also with an helptic belt.
+step 2:- initialize a list of commands
+step 3:- if command not in list then append the command and play the command
+step 4:- if the pygame mixer is busy then pass else remove the current command from command list
