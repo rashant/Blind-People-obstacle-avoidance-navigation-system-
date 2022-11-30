@@ -28,6 +28,8 @@ def path_find(img):
 
     lower=np.array([146,  37,  93])
     upper=np.array([157, 107, 150])
+    # lower=np.array([0,  0,  54])
+    # upper=np.array([179, 68, 255])
     imgHsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
     line_frame=img.copy()
     mask=cv2.inRange(imgHsv,lower,upper)
@@ -44,8 +46,8 @@ def path_find(img):
 
     '''FINDING NUMBER OF WHITE PIXEL IN EACH IMAGE'''
     counter=0
-    for i in range(255,0,-40):
-        crop_img=mask[i-40:i,0:cols]
+    for i in range(255,0,-60):
+        crop_img=mask[i-60:i,0:cols]
         cnts=cv2.findContours(crop_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
         cnts=imutils.grab_contours(cnts)
 

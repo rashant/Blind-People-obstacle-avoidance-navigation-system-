@@ -16,7 +16,7 @@ cv2.createTrackbar("VALUE Min","HSV",0,255,empty)
 cv2.createTrackbar("VALUE Max","HSV",255,255,empty)
 
 
-cap=cv2.VideoCapture("y2mate.com - Feature Space Optimization for Semantic Video Segmentation  CityScapes Demo 02_1080p.mp4")
+cap=cv2.VideoCapture(1)
 counter=0
 while cap.isOpened():
     counter+=1
