@@ -97,6 +97,3 @@ while cap.isOpened():
 
 cap.release()
 cv2.destroyAllWindows()
-
-df=pd.DataFrame({'Commands':com_list})
-df.to_csv('commands.csv')

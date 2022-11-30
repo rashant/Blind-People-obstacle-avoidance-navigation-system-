@@ -112,7 +112,7 @@ def path_find(img):
                 cv2.imshow("Path",final)
                 prevx,prevy=cx,cy+i
                 counter+=1
-        if counter==3:
+        if counter==2:
             break
         
     dic={"Segment":segment_list,"X1":x1_list,"X2":x2_list,"X3":x3_list,"Y1":y1_list,"Y2":y2_list,"Y3":y3_list,"Area":area_list,"Angle":angle_list}
