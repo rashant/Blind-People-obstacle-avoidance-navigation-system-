@@ -26,10 +26,10 @@ def path_find(img):
 
     prevx,prevy=int(cols/2),cols
 
-    lower=np.array([146,  37,  93])
-    upper=np.array([157, 107, 150])
-    # lower=np.array([0,  0,  54])
-    # upper=np.array([179, 68, 255])
+    # lower=np.array([146,  37,  93])
+    # upper=np.array([157, 107, 150])
+    lower=np.array([0,  0,  129])
+    upper=np.array([179, 115, 255])
     imgHsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
     line_frame=img.copy()
     mask=cv2.inRange(imgHsv,lower,upper)
@@ -46,8 +46,8 @@ def path_find(img):
 
     '''FINDING NUMBER OF WHITE PIXEL IN EACH IMAGE'''
     counter=0
-    for i in range(255,0,-60):
-        crop_img=mask[i-60:i,0:cols]
+    for i in range(255,0,-40):
+        crop_img=mask[i-40:i,0:cols]
         cnts=cv2.findContours(crop_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
         cnts=imutils.grab_contours(cnts)
 
@@ -112,7 +112,7 @@ def path_find(img):
                 cv2.imshow("Path",final)
                 prevx,prevy=cx,cy+i
                 counter+=1
-        if counter==2:
+        if counter==3:
             break
         
     dic={"Segment":segment_list,"X1":x1_list,"X2":x2_list,"X3":x3_list,"Y1":y1_list,"Y2":y2_list,"Y3":y3_list,"Area":area_list,"Angle":angle_list}

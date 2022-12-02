@@ -7,8 +7,8 @@ import pandas as pd
 com_list=[]
 
 mixer.init()
-cap=cv2.VideoCapture("D:\Projects\Trinetra\y2mate.com - Feature Space Optimization for Semantic Video Segmentation  CityScapes Demo 02_1080p.mp4")
-# cap=cv2.VideoCapture(1)
+# cap=cv2.VideoCapture("D:\Projects\Trinetra\y2mate.com - Feature Space Optimization for Semantic Video Segmentation  CityScapes Demo 02_1080p.mp4")
+cap=cv2.VideoCapture(1)
 
 command_list=['No']
 
@@ -37,22 +37,9 @@ while cap.isOpened():
             else:
                 
                 mixer.stop()
+    
         
-        elif abs(angle[0])>=0 and abs(angle[0])<=8:
-            command='straight'
-            if command not in command_list:
-                command_list.pop()
-                command_list.append(command)
-                mixer.music.load("commands/straight.mp3")
-                mixer.music.play()
-                print('command played')
-
-            if mixer.music.get_busy():
-                pass
-            else:
-                mixer.stop()
-        
-        elif abs(angle[-1])>8 and abs(angle[-1])<85:
+        elif abs(angle[-1])>20 and abs(angle[-1])<85:
 
             if angle[-1]<0:
                 command='right'
@@ -82,6 +69,20 @@ while cap.isOpened():
         
                 else:
                     mixer.stop()
+
+        elif abs(angle[0])>=0 and abs(angle[0])<=8:
+            command='straight'
+            if command not in command_list:
+                command_list.pop()
+                command_list.append(command)
+                mixer.music.load("commands/straight.mp3")
+                mixer.music.play()
+                print('command played')
+
+            if mixer.music.get_busy():
+                pass
+            else:
+                mixer.stop()
 
 
 
