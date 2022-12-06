@@ -7,8 +7,8 @@ import pandas as pd
 com_list=[]
 
 mixer.init()
-# cap=cv2.VideoCapture("D:\Projects\Trinetra\y2mate.com - Feature Space Optimization for Semantic Video Segmentation  CityScapes Demo 02_1080p.mp4")
-cap=cv2.VideoCapture(1)
+cap=cv2.VideoCapture("D:\Projects\Trinetra\y2mate.com - Feature Space Optimization for Semantic Video Segmentation  CityScapes Demo 02_1080p.mp4")
+# cap=cv2.VideoCapture(1)
 
 command_list=['No']
 

@@ -26,10 +26,10 @@ def path_find(img):
 
     prevx,prevy=int(cols/2),cols
 
-    # lower=np.array([146,  37,  93])
-    # upper=np.array([157, 107, 150])
-    lower=np.array([0,  0,  129])
-    upper=np.array([179, 115, 255])
+    lower=np.array([146,  37,  93])
+    upper=np.array([157, 107, 150])
+    # lower=np.array([0,  0,  129])
+    # upper=np.array([179, 115, 255])
     imgHsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
     line_frame=img.copy()
     mask=cv2.inRange(imgHsv,lower,upper)
