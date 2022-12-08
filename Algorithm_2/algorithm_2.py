@@ -42,6 +42,8 @@ for i in range(12):
 
         average=sumx/12
 
+        
+
         if round(average,0)>=130:
             grid_img[ini_r:r_step,ini_c:c_step]=white_block
             grid_map[i][j]=1
