@@ -10,9 +10,9 @@ try:
         frame=cv2.resize(frame,(360,360))
         grid_img,mask,grid_map=gridMap(frame)
 
-        # cv2.imshow("Image",frame)
-        # cv2.imshow("Grid Image",grid_img)
-        # cv2.imshow("Mask Image",mask)
+        cv2.imshow("Image",frame)
+        cv2.imshow("Grid Image",grid_img)
+        cv2.imshow("Mask Image",mask)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
