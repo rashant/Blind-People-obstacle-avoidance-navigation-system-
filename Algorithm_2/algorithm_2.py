@@ -42,7 +42,7 @@ for i in range(12):
 
         average=sumx/12
 
-        
+
 
         if round(average,0)>=130:
             grid_img[ini_r:r_step,ini_c:c_step]=white_block
@@ -73,4 +73,5 @@ print("Loop execution time  %s seconds ---" % (loop_end_time - loop_start_time))
 print("Code execution time  %s seconds ---" % (code_end_time - code_start_time))
 
 cv2.imshow("Grid Image",grid_img)
+cv2.imshow("Mask Image",mask)
 cv2.waitKey(0)
