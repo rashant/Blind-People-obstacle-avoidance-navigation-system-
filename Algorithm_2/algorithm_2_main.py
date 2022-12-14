@@ -27,6 +27,8 @@ while(cap.isOpened()):
     cv2.imshow('frame', frame)
     cv2.imshow("Grid Image",grid_img)
     cv2.imshow("Mask Image",mask)
+    print(grid_map)
+    print("\n\n")
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
  
