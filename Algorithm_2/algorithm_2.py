@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import time
+from path_finding import *
 
 def gridMap(frame):
 
@@ -17,7 +18,9 @@ def gridMap(frame):
 
     grid_img= np.zeros([180,360],dtype=float)
 
-    grid_map=np.zeros([10,18],dtype=float)
+    grid_map=np.zeros([9,18],dtype=float)
+
+    path_map=np.zeros([180,360],dtype=float)
 
 
     r_step=20
@@ -51,6 +54,51 @@ def gridMap(frame):
         r_step+=20
         ini_c=0
         c_step=20
-        
-    return grid_img,mask,grid_map
+    
+    grid_map=np.array(grid_map)
+    rows,columns=grid_map.shape
+    di=[1,1,1]
+    dj=[0,1,-1]
+    vis=np.zeros(shape=(9,18))
+    move=""
+    final_path=path(i=rows-1,j=int(columns/2),matrix=grid_map,m=rows,n=columns,move=move,vis=vis,di=di,dj=dj)
+    print(final_path)
+
+    path_map[160:180,160:180]=white_block
+    rc_step=20
+    r_init=160
+    c_init=160
+    try:
+        directions=final_path.strip().split(' ')
+        for i in directions:
+            match i:
+                case 'S':
+                    rl=r_init-rc_step
+                    rr=r_init
+                    cl=c_init
+                    cr=c_init+rc_step
+                    path_map[rl:rr,cl:cr]=white_block
+                    r_init=rl
+
+                case 'DL':
+                    rl=r_init-rc_step
+                    rr=r_init
+                    cl=c_init-rc_step
+                    cr=c_init
+                    path_map[rl:rr,cl:cr]=white_block
+                    r_init=rl
+                    c_init=cl
+
+                case 'DR':
+                    rl=r_init-rc_step
+                    rr=r_init
+                    cl=c_init+rc_step
+                    cr=c_init+rc_step*2
+                    path_map[rl:rr,cl:cr]=white_block
+                    r_init=rl
+                    c_init=cl
+    except:
+        pass
+    sleep(1)
+    return grid_img,mask,grid_map,path_map
     
