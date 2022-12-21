@@ -18,7 +18,7 @@ cv2.createTrackbar("VALUE Max","HSV",255,255,empty)
 
 cap=cv2.VideoCapture(1)
 counter=0
-while cap.isOpened():
+while True:
     counter+=1
     if cap.get(cv2.CAP_PROP_FRAME_COUNT)==counter:
         cap.set(cv2.CAP_PROP_POS_FRAMES,0)
