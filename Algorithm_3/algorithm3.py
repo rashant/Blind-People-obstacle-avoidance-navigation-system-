@@ -89,8 +89,8 @@ def path(frame):
     # lower=np.array([146,  37,  93])
     # upper=np.array([157, 107, 150])
 
-    lower=np.array([0,  0,  0])
-    upper=np.array([174,  32, 236])
+    lower=np.array([0,  0,  47])
+    upper=np.array([179,  58, 183])
 
     imgHsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
     mask=cv2.inRange(imgHsv,lower,upper)
@@ -154,5 +154,5 @@ def path(frame):
     pathMap(path_map,directions,white_block,black_block)
 
 
-    #return grid_img,mask,grid_map,path_map,directions
-    return grid_img,mask,directions
+    return grid_img,mask,grid_map,path_map,directions
+    #return grid_img,mask,directions
